@@ -1,0 +1,73 @@
+services:
+  evolution-api:
+    container_name: evolution_api
+    image: evoapicloud/evolution-api:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    networks:
+      - evolution-net
+    depends_on:
+      - postgres
+      - redis
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    volumes:
+      - evolution_instances:/evolution/instances
+
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    networks:
+      - evolution-net
+    command: ["postgres", "-c", "max_connections=1000"]
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    networks:
+      - evolution-net
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PG_ADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PG_ADMIN_PASSWORD}
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "4000:80"
+    depends_on:
+      - postgres
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    networks:
+      - evolution-net
+    command: redis-server --port 6379 --appendonly yes
+    volumes:
+      - evolution_redis:/data
+    ports:
+      - "6379:6379"
+    restart: always
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  evolution_redis:
+  evolution_instances:
+
+networks:
+  evolution-net:
+    name: evolution-net
+    driver: bridge
