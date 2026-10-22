@@ -18,6 +18,17 @@ services:
     volumes:
       - evolution_instances:/evolution/instances
 
+  n8n:
+    container_name: n8n
+    image: docker.n8n.io/n8nio/n8n:latest
+    restart: always
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - evolution-net
+
   postgres:
     container_name: postgres
     image: postgres:15
@@ -66,6 +77,7 @@ volumes:
   pgadmin_data:
   evolution_redis:
   evolution_instances:
+  n8n_data:
 
 networks:
   evolution-net:

@@ -40,21 +40,14 @@ namespace ChatSandBox.Services
         {
             try
             {
-                var apiKey = Env.GetString("GROQ_API_KEY");
-
-                var url = "https://api.groq.com/openai/v1/chat/completions";
+                var url = "http://localhost:5678/webhook/chat";
 
                 var request = new HttpRequestMessage(HttpMethod.Post, url);
 
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-
                 var requestBody = new
                 {
-                    model = "openai/gpt-oss-120b",
-                    messages = new[]
-                    {
-                        new { role = "user", content = userMessage }
-                    }
+                    message = userMessage,
+                    phone = userPhoneNumber
                 };
 
                 request.Content = JsonContent.Create(requestBody);
@@ -64,37 +57,24 @@ namespace ChatSandBox.Services
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine($"GROQ ERROR: {responseString}");
-                    return GetLocalizedErrorMessage(userPhoneNumber, "Instability");
+                    Console.WriteLine($"ERRO DO N8N: {responseString}");
+                    return "Erro interno, por favor tente novamente mais tarde!";    
                 }
 
                 using JsonDocument doc = JsonDocument.Parse(responseString);
                 var root = doc.RootElement;
 
-                if (root.TryGetProperty("choices", out JsonElement choices) && choices.GetArrayLength() > 0)
+                if (root.TryGetProperty("aiResponse", out JsonElement content))
                 {
-                    var firstChoice = choices[0];
-                    if (firstChoice.TryGetProperty("message", out JsonElement message) &&
-                        message.TryGetProperty("content", out JsonElement content))
-                    {
-                        string aiResponseText = content.GetString() ?? "";
-
-                        if (string.IsNullOrWhiteSpace(aiResponseText))
-                        {
-                            return GetLocalizedErrorMessage(userPhoneNumber, "EmptyOrBlocked");
-                        }
-
-                        Console.WriteLine(aiResponseText);
-                        return aiResponseText;
-                    }
+                    return content.GetString() ?? "";
                 }
 
-                return GetLocalizedErrorMessage(userPhoneNumber, "InternalError");
+                return "Mensagem não processada ou bloqueada. Tente novamente.";
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error when calling AI API: {ex.Message}");
-                return GetLocalizedErrorMessage(userPhoneNumber, "InternalError");
+                Console.WriteLine($"Error calling n8n: {ex.Message}");
+                return "Internal Error";
             }
         }
     }

@@ -52,10 +52,18 @@ namespace ChatSandBox.Controllers
 
                         if (!string.IsNullOrEmpty(userMessage) && !string.IsNullOrEmpty(userPhone))
                         {
-                            await ProcessAiAndReplyAsync(userPhone, userMessage);
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await ProcessAiAndReplyAsync(userPhone, userMessage);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Erro no background task da IA: {ex.Message}");
+                                }
+                            });
                         }
-
-                        return Ok();
                     }
                 }
             }
