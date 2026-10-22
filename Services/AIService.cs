@@ -34,7 +34,6 @@ namespace ChatSandBox.Services
             return isBrazilian
                 ? "Desculpe, ocorreu um erro interno. Tente novamente mais tarde."
                 : "Sorry, an internal error occurred. Please try again later.";
-
         }
 
         public async Task<string> GetResponseAsync(string userPhoneNumber, string userMessage)
