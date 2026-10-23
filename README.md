@@ -19,3 +19,6 @@ Um ecossistema completo de atendimento automatizado via WhatsApp, utilizando Int
 - [ ] Implementar memória
 - [ ] Adicionar system prompt
 - [ ] Controle de tokens
+
+## n8n
+Há uma segunda branch nesse repositório, com uma versão pronta para rodar com um sistema n8n, que é uma ferramenta de automação de fluxos de trabalho. Essa versão permite a integração com o ChatSandBox, facilitando a criação e gerenciamento de fluxos lógicos para atendimento automatizado via WhatsApp.
