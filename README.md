@@ -1,6 +1,6 @@
 # ChatSandBox
 
-Um ecossistema completo de atendimento automatizado via WhatsApp, utilizando Inteligência Artificial, orquestração visual e microsserviços.
+Um ecossistema de atendimento automatizado via WhatsApp, utilizando Inteligência Artificial e orquestração visual.
 
 ## Arquitetura e Tecnologias
 * **Backend:** C# / ASP.NET Core (Gestão de Webhooks, regras de negócio).
